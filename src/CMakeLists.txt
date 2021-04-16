@@ -17,6 +17,11 @@ set_target_properties(
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../bin"
 )
 
+#target_link_libraries(
+#    ${PROJECT}
+#    -static
+#)
+
 #target_compile_options(
 #    ${PROJECT}
 #    PRIVATE
@@ -36,15 +41,15 @@ set_target_properties(
 
 target_include_directories(
     ${PROJECT}
-    PUBLIC
+    PRIVATE
     "/usr/local/boost_1_74_0/include"
 )
 
-## threads
-#set(THREADS_PREFER_PTHREAD_FLAG ON)
-#find_package(Threads REQUIRED)
-#
-#target_link_libraries(
-#    ${PROJECT}
-#    Threads::Threads
-#)
+# threads
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+target_link_libraries(
+    ${PROJECT}
+    Threads::Threads
+)
