@@ -24,7 +24,6 @@ main(int argc_, char **argv_)
         std::cerr << "ERROR: Missing hostname arguments." << '\n';
         std::exit(1);
     }
-    std::cerr << "Testing" << '\n';
     do_work(argc_ - 1, argv_ + 1);
     std::exit(exit_code);
 }
