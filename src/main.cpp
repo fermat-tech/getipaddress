@@ -13,6 +13,7 @@ struct Options
     using host_list_t = std::vector<std::string>;
     bool ipv4 = false;
     bool ipv6 = false;
+    bool async = false;
     host_list_t host_list;
 };
 
@@ -59,16 +60,17 @@ bool parse_cmd_line(int argc_, char **argv_, Options& opts_)
     auto accumulate = false;
     for (auto i = 0; i < argc_; ++i)
     {
-        std::string opt, opt_name, opt_value;
-        opt = *(argv_ + i);
+        std::string opt = *(argv_ + i);
         if (accumulate)
             opts_.host_list.push_back(opt);
-        else if (opt == "--ipv4" || opt == "-ipv4")
+        else if (opt == "--4" || opt == "-4" || opt == "--ipv4" || opt == "-ipv4")
             opts_.ipv4 = true;
-        else if (opt == "--ipv6" || opt == "-ipv6")
+        else if (opt == "--6" || opt == "-6" || opt == "--ipv6" || opt == "-ipv6")
             opts_.ipv6 = true;
         else if (opt == "--" || opt == "-")
             accumulate = true;
+        else if (opt == "--async" || opt == "-async" || opt == "-a")
+            opts_.async = true;
         else if (opt == "--help" || opt == "-help" || opt == "-h")
             errors = true; // Cause help message.
         else {
@@ -119,13 +121,15 @@ bool do_work(const Options& opts_)
 void usage(const std::string& pname_)
 {
     std::cerr << '\n'
-        << "usage: " << pname_ << " [--help] [--ipv4] [--ipv6] [--] HOSTNAME..." << '\n'
+        << "usage: " << pname_ << " [--help] [--ipv4|--4] [--ipv6|--6] [--async] [--] HOSTNAME..." << '\n'
         << '\n'
         << "NOTES" << '\n'
         << '\n'
         << "The default is to print both ipv4 and ipv6 addresses." << '\n'
         << "Use --ipv4 and/or --ipv6 to print only those ip address versions." << '\n'
         << "Use -- to indicate that the following arguments are hostnames." << '\n'
+        << "Use --async to resolve hostnames simultaneously and print results as they become available." << '\n'
+        << "Using --async is helpful when there are many hostnames to be resolved." << '\n'
         << '\n';
 }
 
