@@ -199,7 +199,7 @@ bool async_do_work(const Options& opts_)
             }
             else
             {
-                std::unique_lock<std::mutex> print_mtx{};
+                std::unique_lock<std::mutex> lck{ print_mtx };
                 for (const tcp::endpoint& ep : results_)
                 {
                     if (opts_.ipv4 && ep.address().is_v4())
