@@ -177,12 +177,11 @@ bool do_work(const Options& opts_)
 bool async_do_work(const Options& opts_)
 {
     auto success = true;
-    auto nthreads = 4;
     std::vector<std::shared_ptr<net::io_context>> ioc_list;
     std::vector<tcp::resolver> res_list;
-    for (auto i = 0; i < nthreads; ++i)
+    for (auto i = 0; i < opts_.nthreads; ++i)
         ioc_list.emplace_back(std::make_shared<net::io_context>());
-    for (auto i = 0; i < nthreads; ++i)
+    for (auto i = 0; i < opts_.nthreads; ++i)
         res_list.emplace_back(*ioc_list[i]);
     static std::mutex print_mtx; // Mutex for locking std::cout/cerr resources.
     auto i = 0;
@@ -211,13 +210,13 @@ bool async_do_work(const Options& opts_)
                 }
             }
         };
-        if (i >= nthreads)
+        if (i >= opts_.nthreads)
             i = 0;
         res_list[i++].async_resolve(hostname, "", process_results);
     }
     std::vector<std::thread> threads;
-    threads.reserve(nthreads);
-    for (auto i = 0; i < nthreads; ++i)
+    threads.reserve(opts_.nthreads);
+    for (auto i = 0; i < opts_.nthreads; ++i)
     {
         auto ioc = ioc_list[i];
             threads.emplace_back(
