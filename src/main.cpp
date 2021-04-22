@@ -36,32 +36,34 @@ main(int argc_, char **argv_)
     // Get the program name.
     {
         using std::filesystem::path;
-        program_name = path{ *(argv_) }.stem().generic_string();
+        program_name = path{ *argv_ }.stem().generic_string();
     }
-    Options opts; // The command line options.
-    // Parse the command line.
-    auto parse_result = parse_cmd_line(argc_ - 1, argv_ + 1, opts);
-    if (!parse_result) // If command line parsing failed.
-    {
-        usage(program_name); // Print help information.
-        std::exit(1); // Exit the program.
-    }
-    auto success = false; // Indicator for errors resolving hostnames.
-    if (!opts.nthreads) // If not asynchronous
-    {
-        success = do_work(opts); // Resolve hostnames synchronously.
-    }
-    else // Asynchronous resolution requested
-    {
-        success = async_do_work(opts); // Resolve hostnames asynchronously.
-    }
-    if (!success) // If any hostname wasn't resolved.
-    {
-        exit_code = 2; // Exit code indicating some hostnames could not be resolved.
-        std::cerr << '\n'
-            << program_name 
-            << ": NOTICE: Some hostnames could not be resolved." 
-            << '\n';
+    { // Use block to appease valgrind.
+        Options opts; // The command line options.
+        // Parse the command line.
+        auto parse_result = parse_cmd_line(argc_ - 1, argv_ + 1, opts);
+        if (!parse_result) // If command line parsing failed.
+        {
+            usage(program_name); // Print help information.
+            std::exit(1); // Exit the program.
+        }
+        auto success = false; // Indicator for errors resolving hostnames.
+        if (!opts.nthreads) // If not asynchronous
+        {
+            success = do_work(opts); // Resolve hostnames synchronously.
+        }
+        else // Asynchronous resolution requested
+        {
+            success = async_do_work(opts); // Resolve hostnames asynchronously.
+        }
+        if (!success) // If any hostname wasn't resolved.
+        {
+            exit_code = 2; // Exit code indicating some hostnames could not be resolved.
+            std::cerr << '\n'
+                << program_name
+                << ": NOTICE: Some hostnames could not be resolved."
+                << '\n';
+        }
     }
     std::exit(exit_code); // Exit the program.
 }
