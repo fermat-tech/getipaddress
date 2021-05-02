@@ -17,10 +17,12 @@ set_target_properties(
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../bin"
 )
 
+find_package(Boost 1.74.0 REQUIRED)
+
 target_include_directories(
     ${PROJECT}
     PRIVATE
-    "/usr/local/boost_1_74_0/include"
+    ${Boost_INCLUDE_DIRS}
 )
 
 # threads
